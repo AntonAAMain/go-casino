@@ -1,0 +1,33 @@
+global:
+  scrape_interval: 15s
+  evaluation_interval: 15s
+
+scrape_configs:
+  - job_name: "prometheus"
+    static_configs:
+      - targets: ["localhost:9090"]
+
+  - job_name: "admin"
+    static_configs:
+      - targets: ["casino-admin:8083"]
+    metrics_path: "/metrics"
+
+  - job_name: "auth"
+    static_configs:
+      - targets: ["casino-auth:8087"]
+    metrics_path: "/metrics"
+
+  - job_name: "payment"
+    static_configs:
+      - targets: ["casino-payment:8090"]
+    metrics_path: "/metrics"
+
+  - job_name: "cases"
+    static_configs:
+      - targets: ["casino-cases:8088"]
+    metrics_path: "/metrics"
+
+  - job_name: "inventory"
+    static_configs:
+      - targets: ["casino-inventory:8089"]
+    metrics_path: "/metrics"

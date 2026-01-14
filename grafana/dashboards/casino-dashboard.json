@@ -1,0 +1,277 @@
+{
+  "title": "Casino Microservices Dashboard",
+  "tags": ["casino", "microservices"],
+  "timezone": "browser",
+  "panels": [
+    {
+      "id": 1,
+      "title": "Admin Service - Created Boxes",
+      "type": "stat",
+      "targets": [
+        {
+          "expr": "admin_boxes_created_total",
+          "refId": "A"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          }
+        }
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 0
+      }
+    },
+    {
+      "id": 2,
+      "title": "Admin Service - Created Cars",
+      "type": "stat",
+      "targets": [
+        {
+          "expr": "admin_cars_created_total",
+          "refId": "A"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "blue",
+                "value": null
+              }
+            ]
+          }
+        },
+        "gridPos": {
+          "h": 8,
+          "w": 12,
+          "x": 12,
+          "y": 0
+        }
+      }
+    },
+    {
+      "id": 3,
+      "title": "Auth Service - Users Registered",
+      "type": "stat",
+      "targets": [
+        {
+          "expr": "auth_users_registered_total",
+          "refId": "A"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "blue",
+                "value": null
+              }
+            ]
+          }
+        }
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 8
+      }
+    },
+    {
+      "id": 4,
+      "title": "Auth Service - Users Logged In",
+      "type": "stat",
+      "targets": [
+        {
+          "expr": "auth_users_logged_in_total",
+          "refId": "A"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          }
+        }
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 8
+      }
+    },
+    {
+      "id": 5,
+      "title": "Payment Service - Payments Processed",
+      "type": "stat",
+      "targets": [
+        {
+          "expr": "payment_payments_processed_total",
+          "refId": "A"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "orange",
+                "value": null
+              }
+            ]
+          }
+        }
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 16
+      }
+    },
+    {
+      "id": 6,
+      "title": "Cases Service - Boxes Opened",
+      "type": "stat",
+      "targets": [
+        {
+          "expr": "cases_boxes_opened_total",
+          "refId": "A"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "purple",
+                "value": null
+              }
+            ]
+          }
+        }
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 16
+      }
+    },
+    {
+      "id": 7,
+      "title": "Inventory Service - Items Sold",
+      "type": "stat",
+      "targets": [
+        {
+          "expr": "inventory_items_sold_total",
+          "refId": "A"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "red",
+                "value": null
+              }
+            ]
+          }
+        }
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 24
+      }
+    },
+    {
+      "id": 8,
+      "title": "HTTP Requests by Service",
+      "type": "graph",
+      "targets": [
+        {
+          "expr": "rate(admin_http_requests_total[5m])",
+          "refId": "A",
+          "legendFormat": "Admin"
+        },
+        {
+          "expr": "rate(auth_http_requests_total[5m])",
+          "refId": "B",
+          "legendFormat": "Auth"
+        },
+        {
+          "expr": "rate(payment_http_requests_total[5m])",
+          "refId": "C",
+          "legendFormat": "Payment"
+        },
+        {
+          "expr": "rate(cases_http_requests_total[5m])",
+          "refId": "D",
+          "legendFormat": "Cases"
+        },
+        {
+          "expr": "rate(inventory_http_requests_total[5m])",
+          "refId": "E",
+          "legendFormat": "Inventory"
+        }
+      ],
+      "gridPos": {
+        "h": 8,
+        "w": 24,
+        "x": 0,
+        "y": 32
+      }
+    }
+  ],
+  "time": {
+    "from": "now-1h",
+    "to": "now"
+  },
+  "timepicker": {},
+  "templating": {
+    "list": []
+  },
+  "annotations": {
+    "list": []
+  },
+  "refresh": "5s",
+  "schemaVersion": 27,
+  "version": 0,
+  "links": []
+}

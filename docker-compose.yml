@@ -1,0 +1,194 @@
+version: "3.8"
+
+services:
+  # PostgreSQL база данных (общая для всех микросервисов)
+  postgres:
+    image: postgres:15-alpine
+    container_name: casino-postgres
+    environment:
+      POSTGRES_DB: go-casino
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: 0611
+    ports:
+      - "5433:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./init-postgres.sql:/docker-entrypoint-initdb.d/init-postgres.sql
+      - ./dump.rdb:/docker-entrypoint-initdb.d/dump.rdb # если нужно инициализировать данными
+    networks:
+      - casino-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Redis для кэширования
+  redis:
+    image: redis:7-alpine
+    container_name: casino-redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    networks:
+      - casino-network
+    restart: unless-stopped
+    command: redis-server --appendonly yes
+
+  # Admin сервис
+  admin:
+    build:
+      context: .
+      dockerfile: admin/cmd/admin/Dockerfile
+    container_name: casino-admin
+    ports:
+      - "8082:8082"
+      - "8083:8083"
+    environment:
+      DATABASE_URL: postgres://postgres:0611@postgres:5432/go-casino?sslmode=disable
+      REDIS_URL: redis://redis:6379
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_started
+    networks:
+      - casino-network
+    restart: unless-stopped
+
+  # Auth сервис
+  auth:
+    build:
+      context: .
+      dockerfile: auth/cmd/auth/Dockerfile
+    container_name: casino-auth
+    ports:
+      - "8080:8080"
+      - "8087:8087"
+    environment:
+      DATABASE_URL: postgres://postgres:0611@postgres:5432/go-casino?sslmode=disable
+      REDIS_URL: redis://redis:6379
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_started
+    networks:
+      - casino-network
+    restart: unless-stopped
+
+    # Cases сервис
+  cases:
+    build:
+      context: .
+      dockerfile: cases/cmd/cases/Dockerfile
+    container_name: casino-cases
+    ports:
+      - "8084:8084"
+      - "8088:8088"
+    environment:
+      DATABASE_URL: postgres://postgres:0611@postgres:5432/go-casino?sslmode=disable
+      REDIS_URL: redis://redis:6379
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_started
+    networks:
+      - casino-network
+    restart:
+      unless-stopped
+
+      # Payment сервис
+  payment:
+    build:
+      context: .
+      dockerfile: payment/cmd/payment/Dockerfile
+    container_name: casino-payment
+    ports:
+      - "8081:8081"
+      - "8090:8090"
+    environment:
+      DATABASE_URL: postgres://postgres:0611@postgres:5432/go-casino?sslmode=disable
+      REDIS_URL: redis://redis:6379
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_started
+    networks:
+      - casino-network
+    restart:
+      unless-stopped
+
+      # Inventory сервис
+  inventory:
+    build:
+      context: .
+      dockerfile: inventory/cmd/inventory/Dockerfile
+    container_name: casino-inventory
+    ports:
+      - "8085:8085"
+      - "8089:8089"
+    environment:
+      DATABASE_URL: postgres://postgres:0611@postgres:5432/go-casino?sslmode=disable
+      REDIS_URL: redis://redis:6379
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_started
+    networks:
+      - casino-network
+    restart: unless-stopped
+
+  # Prometheus для мониторинга
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: casino-prometheus
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml
+      - prometheus_data:/prometheus
+    networks:
+      - casino-network
+    restart: unless-stopped
+    command:
+      - "--config.file=/etc/prometheus/prometheus.yml"
+      - "--storage.tsdb.path=/prometheus"
+      - "--web.console.libraries=/etc/prometheus/console_libraries"
+      - "--web.console.templates=/etc/prometheus/consoles"
+      - "--storage.tsdb.retention.time=200h"
+      - "--web.enable-lifecycle"
+
+  # Grafana для визуализации метрик
+  grafana:
+    image: grafana/grafana:latest
+    container_name: casino-grafana
+    ports:
+      - "3000:3000"
+    volumes:
+      - grafana_data:/var/lib/grafana
+      - ./grafana/provisioning:/etc/grafana/provisioning
+      - ./grafana/dashboards:/var/lib/grafana/dashboards
+    environment:
+      - GF_SECURITY_ADMIN_PASSWORD=admin
+      - GF_USERS_ALLOW_SIGN_UP=false
+    networks:
+      - casino-network
+    restart: unless-stopped
+    depends_on:
+      - prometheus
+
+volumes:
+  postgres_data:
+  redis_data:
+  prometheus_data:
+  grafana_data:
+
+networks:
+  casino-network:
+    driver: bridge
