@@ -31,7 +31,7 @@ func max(a, b float64) float64 {
 	return b
 }
 
-func GroupCarsByBoxPrice(cars []*dto.CarResponse, boxPrice float32) (cheaper, equal, moreExpensive []dto.CarResponse) {
+func 	GroupCarsByBoxPrice(cars []*dto.CarResponse, boxPrice float32) (cheaper, equal, moreExpensive []dto.CarResponse) {
 	prices := make([]float64, len(cars))
 	for i, car := range cars {
 		prices[i] = float64(car.Price)

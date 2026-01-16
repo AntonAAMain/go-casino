@@ -141,7 +141,7 @@ func main() {
 	// Отдельный роутер для метрик БЕЗ аутентификации
 	metrics := echo.New()
 	metrics.GET("/metrics", echo.WrapHandler(promhttp.Handler()))
-
+	
 	// Запускаем метрики сервер на отдельном порту
 	go func() {
 		if err := metrics.Start(":8083"); err != nil {

@@ -61,7 +61,7 @@ func Protected(isAdmin bool) echo.MiddlewareFunc {
 			if err != nil {
 				return c.JSON(401, map[string]string{"error": "unauthorized"})
 			}
-
+			
 			if isAdmin && role == "USER" {
 				return c.JSON(401, map[string]string{"error": "not enough rights"})
 

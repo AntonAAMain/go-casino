@@ -14,20 +14,25 @@ scrape_configs:
 
   - job_name: "auth"
     static_configs:
-      - targets: ["casino-auth:8087"]
+      - targets: ["casino-auth:8080"]
     metrics_path: "/metrics"
 
   - job_name: "payment"
     static_configs:
-      - targets: ["casino-payment:8090"]
+      - targets: ["casino-payment:8081"]
     metrics_path: "/metrics"
 
   - job_name: "cases"
     static_configs:
-      - targets: ["casino-cases:8088"]
+      - targets: ["casino-cases:8084"]
     metrics_path: "/metrics"
 
   - job_name: "inventory"
     static_configs:
-      - targets: ["casino-inventory:8089"]
+      - targets: ["casino-inventory:8085"]
+    metrics_path: "/metrics"
+
+  - job_name: "gateway"
+    static_configs:
+      - targets: ["casino-gateway:8086"]
     metrics_path: "/metrics"
